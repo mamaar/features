@@ -1,5 +1,7 @@
 # Features
 
+**NOTE:** This is an experimental repository, and stability is not guaranteed.
+
 ## Flexible data models
 
 Flexible data models allow you to define and manipulate data structures dynamically. 
