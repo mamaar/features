@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "migrations": {
+      "type": "array",
+      "description": "List of migration steps to apply to the schema. Each step is an object with a 'type' property that specifies the type of migration to apply.",
+      "items": {
+        "type": "object",
+        "oneOf": [
+          {
+            "type": "object",
+            "description": "Add a new field to the schema.",
+            "properties": {
+              "type": {
+                "const": "add_field"
+              },
+              "field": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "description": "The data type of the field.",
+                    "type": "object",
+                    "anyOf": [
+                      {
+                        "$ref": "./field_type_string.json"
+                      },
+                      {
+                        "$ref": "./field_type_integer.json"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            },
+            "additionalProperties": false,
+            "required": [
+              "field"
+            ]
+          },
+          {
+            "type": "object",
+            "description": "Remove a field from the schema.",
+            "properties": {
+              "type": {
+                "const": "remove_field"
+              },
+              "field": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            },
+            "additionalProperties": false,
+            "required": [
+              "field"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
