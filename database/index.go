@@ -3,7 +3,8 @@ package database
 import (
 	"strings"
 
-	"github.com/mamaar/features/champ/maps"
+	"github.com/mamaar/jsonchamp/maps"
+
 	"github.com/mamaar/features/feature"
 )
 

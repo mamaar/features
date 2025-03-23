@@ -5,9 +5,10 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/mamaar/features/champ/maps"
 	"github.com/santhosh-tekuri/jsonschema/v6"
 	"github.com/santhosh-tekuri/jsonschema/v6/kind"
+
+	"github.com/mamaar/jsonchamp/maps"
 )
 
 type Validator struct {

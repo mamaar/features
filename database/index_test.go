@@ -3,8 +3,8 @@ package database
 import (
 	"testing"
 
-	"github.com/mamaar/features/champ/maps"
 	"github.com/mamaar/features/feature"
+	"github.com/mamaar/jsonchamp/maps"
 )
 
 func TestProp(t *testing.T) {

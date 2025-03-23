@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/mamaar/features/champ/maps"
+	"github.com/mamaar/jsonchamp/maps"
 )
 
 var (

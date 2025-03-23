@@ -7,7 +7,7 @@ import (
 
 	"github.com/santhosh-tekuri/jsonschema/v6"
 
-	"github.com/mamaar/features/champ/maps"
+	"github.com/mamaar/jsonchamp/maps"
 )
 
 var (
