@@ -22,8 +22,9 @@ type Operation interface {
 type FieldType string
 
 const (
-	FieldTypeString FieldType = "string"
-	FieldTypeNumber FieldType = "number"
+	FieldTypeString  FieldType = "string"
+	FieldTypeNumber  FieldType = "number"
+	FieldTypeInteger FieldType = "integer"
 )
 
 type Field struct {
