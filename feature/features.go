@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/mamaar/jsonchamp/maps"
+	"github.com/mamaar/jsonchamp"
 )
 
 var (
@@ -16,12 +16,12 @@ var (
 type Feature struct {
 	schema        Schema
 	schemaVersion int
-	m             *maps.Map
+	m             *jsonchamp.Map
 }
 
 type Option func(*Feature)
 
-func WithMap(m *maps.Map) Option {
+func WithMap(m *jsonchamp.Map) Option {
 	return func(f *Feature) {
 		f.m = m
 	}
@@ -30,7 +30,7 @@ func WithMap(m *maps.Map) Option {
 func New(sch Schema, opts ...Option) *Feature {
 	f := &Feature{
 		schema: sch,
-		m:      maps.New(),
+		m:      jsonchamp.New(),
 	}
 
 	for _, opt := range opts {
@@ -40,7 +40,7 @@ func New(sch Schema, opts ...Option) *Feature {
 	return f
 }
 
-func (f *Feature) Map() *maps.Map {
+func (f *Feature) Map() *jsonchamp.Map {
 	return f.m
 }
 
@@ -58,7 +58,7 @@ func (f *Feature) Get(key string) (any, bool) {
 
 func (f *Feature) GetString(key string) (string, error) {
 	v, err := f.m.GetString(key)
-	if errors.Is(err, maps.ErrKeyNotFound) {
+	if errors.Is(err, jsonchamp.ErrKeyNotFound) {
 		return "", fmt.Errorf("%w: %s", ErrPropertyNotFound, key)
 	}
 	if err != nil {
@@ -69,7 +69,7 @@ func (f *Feature) GetString(key string) (string, error) {
 
 func (f *Feature) GetFloat(key string) (float64, error) {
 	v, err := f.m.GetFloat(key)
-	if errors.Is(err, maps.ErrKeyNotFound) {
+	if errors.Is(err, jsonchamp.ErrKeyNotFound) {
 		return 0.0, fmt.Errorf("%w: %s", ErrPropertyNotFound, key)
 	}
 	if err != nil {
@@ -78,9 +78,9 @@ func (f *Feature) GetFloat(key string) (float64, error) {
 	return v, nil
 }
 
-func (f *Feature) GetInt(key string) (int, error) {
+func (f *Feature) GetInt(key string) (int64, error) {
 	v, err := f.m.GetInt(key)
-	if errors.Is(err, maps.ErrKeyNotFound) {
+	if errors.Is(err, jsonchamp.ErrKeyNotFound) {
 		return 0, fmt.Errorf("%w: %s", ErrPropertyNotFound, key)
 	}
 	if err != nil {
@@ -125,7 +125,7 @@ func (f *Feature) UnmarshalJSON(data []byte) error {
 	if d.Payload == nil {
 		d.Payload = []byte("{}")
 	}
-	m := maps.New()
+	m := jsonchamp.New()
 	if err := json.Unmarshal(d.Payload, &m); err != nil {
 		return err
 	}

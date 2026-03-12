@@ -3,12 +3,13 @@ package feature
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/santhosh-tekuri/jsonschema/v6"
 	"github.com/santhosh-tekuri/jsonschema/v6/kind"
 
-	"github.com/mamaar/jsonchamp/maps"
+	"github.com/mamaar/jsonchamp"
 )
 
 type Validator struct {
@@ -36,22 +37,22 @@ func (v *Validator) Validate(m *Feature) error {
 	}
 	var validationErr *jsonschema.ValidationError
 	if errors.As(err, &validationErr) {
-		validationErrors := maps.New()
+		validationErrors := jsonchamp.New()
 		for _, cause := range validationErr.Causes {
 			switch k := cause.ErrorKind.(type) {
 			case *kind.Type:
 				location := cause.InstanceLocation[0]
-				validationErrors = validationErrors.Set(location, maps.NewFromItems("got", k.Got, "expect", k.Want))
+				validationErrors = validationErrors.Set(location, jsonchamp.NewFromItems("got", k.Got, "expect", k.Want))
 			case *kind.Required:
 				for _, missing := range k.Missing {
-					validationErrors = validationErrors.Set(missing, maps.NewFromItems("required", true))
+					validationErrors = validationErrors.Set(missing, jsonchamp.NewFromItems("required", true))
 				}
 			default:
 				panic("unexpected error kind")
 			}
 		}
 		if len(validationErrors.Keys()) > 0 {
-			return validationErrors
+			return fmt.Errorf("validation errors")
 		}
 	}
 	if err != nil {

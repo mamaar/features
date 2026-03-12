@@ -4,7 +4,7 @@ import (
 	"net/url"
 	"testing"
 
-	"github.com/mamaar/jsonchamp/maps"
+	"github.com/mamaar/jsonchamp"
 
 	"github.com/mamaar/features/feature"
 )
@@ -29,7 +29,7 @@ func TestSomething(t *testing.T) {
 
 	fe := feature.New(
 		sch,
-		feature.WithMap(maps.New()),
+		feature.WithMap(jsonchamp.New()),
 	)
 
 	fo := New(fe)

@@ -7,7 +7,7 @@ import (
 
 	"github.com/santhosh-tekuri/jsonschema/v6"
 
-	"github.com/mamaar/jsonchamp/maps"
+	"github.com/mamaar/jsonchamp"
 )
 
 var (
@@ -26,7 +26,7 @@ var Empty = Schema{
 }
 
 // Migrate applies the migrations to the input map.
-func (s Schema) Migrate(m *maps.Map) (*maps.Map, error) {
+func (s Schema) Migrate(m *jsonchamp.Map) (*jsonchamp.Map, error) {
 	var err error
 
 	res := m.Copy()

@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/mamaar/jsonchamp/maps"
+	"github.com/mamaar/jsonchamp"
 )
 
 var (
@@ -16,7 +16,7 @@ var (
 
 type Operation interface {
 	// Apply applies the operation to the given data model.
-	Apply(*maps.Map) (*maps.Map, error)
+	Apply(*jsonchamp.Map) (*jsonchamp.Map, error)
 }
 
 type FieldType string
@@ -37,7 +37,7 @@ type AddField struct {
 	Field Field
 }
 
-func NewAddFieldFromMap(m *maps.Map) (AddField, error) {
+func NewAddFieldFromMap(m *jsonchamp.Map) (AddField, error) {
 	fieldDef, err := m.GetMap("field")
 	if err != nil {
 		return AddField{}, err
@@ -72,7 +72,7 @@ func NewAddFieldFromMap(m *maps.Map) (AddField, error) {
 // Apply implements Operation.
 // It handles migrations of the data model by adding a new field.
 // If the field is required, it must have a default value.
-func (a AddField) Apply(in *maps.Map) (*maps.Map, error) {
+func (a AddField) Apply(in *jsonchamp.Map) (*jsonchamp.Map, error) {
 	hasCurrentValue := in.Contains(a.Field.Name)
 
 	// If the field is required it must have a default value or already exist in the data model.
@@ -94,7 +94,7 @@ type AlterField struct {
 }
 
 // Apply implements Operation.
-func (a AlterField) Apply(*maps.Map) (*maps.Map, error) {
+func (a AlterField) Apply(*jsonchamp.Map) (*jsonchamp.Map, error) {
 	panic("unimplemented")
 }
 
@@ -105,7 +105,7 @@ type RemoveField struct {
 }
 
 // Apply implements Operation.
-func (r RemoveField) Apply(in *maps.Map) (*maps.Map, error) {
+func (r RemoveField) Apply(in *jsonchamp.Map) (*jsonchamp.Map, error) {
 	n, wasDeleted := in.Delete(r.FieldName)
 	if !wasDeleted {
 		return nil, fmt.Errorf("field '%s' does not exist", r.FieldName)
@@ -124,7 +124,7 @@ func unmarshalOperations(ops []any) ([]Operation, error) {
 	opsRes := make([]Operation, len(ops))
 
 	for i, op := range ops {
-		opMap, ok := op.(*maps.Map)
+		opMap, ok := op.(*jsonchamp.Map)
 		if !ok {
 			return nil, fmt.Errorf("operation %d is not a map", i)
 		}
@@ -152,7 +152,7 @@ func unmarshalOperations(ops []any) ([]Operation, error) {
 }
 
 func (m *Migration) UnmarshalJSON(data []byte) error {
-	var d *maps.Map
+	var d *jsonchamp.Map
 	if err := json.Unmarshal(data, &d); err != nil {
 		return err
 	}
@@ -185,10 +185,10 @@ func (m Migrations) Validate() error {
 }
 
 // Reduce returns a JSON schema as a map that can be used to validate the data.
-func (m Migrations) Reduce() (*maps.Map, error) {
-	required := maps.New()
+func (m Migrations) Reduce() (*jsonchamp.Map, error) {
+	required := jsonchamp.New()
 
-	properties := maps.NewFromItems()
+	properties := jsonchamp.NewFromItems()
 	for migrationIndex, migration := range m {
 		for _, op := range migration.Operations {
 			switch op := op.(type) {
@@ -205,7 +205,7 @@ func (m Migrations) Reduce() (*maps.Map, error) {
 					return nil, fmt.Errorf("required field must have a default value: %s", op.Field.Name)
 				}
 
-				properties = properties.Set(field.Name, maps.NewFromItems("type", string(field.Type)))
+				properties = properties.Set(field.Name, jsonchamp.NewFromItems("type", string(field.Type)))
 				if op.Field.Required {
 					required = required.Set(field.Name, true)
 				}
@@ -225,7 +225,7 @@ func (m Migrations) Reduce() (*maps.Map, error) {
 		}
 	}
 
-	schemaDocument := maps.NewFromItems(
+	schemaDocument := jsonchamp.NewFromItems(
 		"properties", properties,
 		"required", required.Keys(),
 	)
